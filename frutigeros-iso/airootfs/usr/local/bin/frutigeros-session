@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# Start the FrutigerOS graphical session from a live TTY.
+#
+# The current AeroWM build ships the Smithay winit backend, so it must run
+# inside an existing display server (X11 or Wayland). Starting AeroWM
+# directly on DRM/KMS is tracked in Phase 4 of the roadmap.
+set -u
+
+log() { printf '[frutigeros-session] %s\n' "$*"; }
+
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=FrutigerOS
+export XDG_SESSION_DESKTOP=frutigeros
+export MOZ_ENABLE_WAYLAND=1
+export QT_QPA_PLATFORM=wayland
+export GDK_BACKEND=wayland
+
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+
+# Seed default configuration without overwriting user edits.
+/usr/local/bin/frutigeros-live-setup --quiet || true
+
+if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; then
+  log "No host display server found."
+  log "AeroWM's DRM/udev backend is not implemented yet, so the session cannot"
+  log "start directly on a bare TTY. Start Xorg (startx) and re-run this script."
+  exec /bin/bash -l
+fi
+
+log "Starting AeroWM…"
+aerowm &
+wm_pid=$!
+
+# Wait up to 5 seconds for the Wayland socket.
+for _ in $(seq 1 50); do
+  [ -S "$XDG_RUNTIME_DIR/wayland-0" ] && break
+  sleep 0.1
+done
+
+if ! kill -0 "$wm_pid" 2>/dev/null; then
+  log "AeroWM failed to start; falling back to a shell."
+  exec /bin/bash -l
+fi
+
+export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"
+
+shell_pid=0
+if command -v aeroshell >/dev/null 2>&1; then
+  log "Starting AeroShell…"
+  aeroshell &
+  shell_pid=$!
+else
+  log "aeroshell is not installed; skipping the panel."
+fi
+
+if command -v aero-welcome >/dev/null 2>&1; then
+  aero-welcome &
+fi
+
+wait "$wm_pid"
+status=$?
+
+if [ "$shell_pid" -ne 0 ]; then
+  kill "$shell_pid" 2>/dev/null || true
+fi
+
+log "AeroWM exited (status $status)."
+exit "$status"

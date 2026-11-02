@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" role="img" aria-label="FrutigerOS architecture diagram">
+  <defs>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b4d70"/>
+      <stop offset="1" stop-color="#062235"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#00aeef"/>
+      <stop offset="1" stop-color="#00f5d4"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7ddcff"/>
+    </marker>
+  </defs>
+  <rect width="900" height="480" rx="20" fill="#020f1a"/>
+  <text x="40" y="46" fill="#eafbff" font-family="Inter, sans-serif" font-size="22" font-weight="700">FrutigerOS component map</text>
+  <text x="40" y="70" fill="#7ddcff" font-family="Inter, sans-serif" font-size="13" opacity="0.8">First-party Rust code above the Smithay boundary</text>
+
+  <g font-family="Inter, sans-serif">
+    <rect x="40" y="96" width="220" height="90" rx="12" fill="url(#glass)" stroke="#00aeef" stroke-opacity="0.5"/>
+    <text x="60" y="124" fill="#eafbff" font-size="15" font-weight="600">Aero apps</text>
+    <text x="60" y="147" fill="#a9e9ff" font-size="12">Files · Terminal · Settings</text>
+    <text x="60" y="165" fill="#a9e9ff" font-size="12">Music · Notes · Monitor · …</text>
+
+    <rect x="340" y="96" width="220" height="90" rx="12" fill="url(#glass)" stroke="#00aeef" stroke-opacity="0.5"/>
+    <text x="360" y="124" fill="#eafbff" font-size="15" font-weight="600">AeroShell</text>
+    <text x="360" y="147" fill="#a9e9ff" font-size="12">Panel · Launcher</text>
+    <text x="360" y="165" fill="#a9e9ff" font-size="12">Notifications</text>
+
+    <rect x="640" y="96" width="220" height="90" rx="12" fill="url(#glass)" stroke="#00aeef" stroke-opacity="0.5"/>
+    <text x="660" y="124" fill="#eafbff" font-size="15" font-weight="600">AeroInstaller</text>
+    <text x="660" y="147" fill="#a9e9ff" font-size="12">Wizard state machine</text>
+    <text x="660" y="165" fill="#a9e9ff" font-size="12">Command planner · disk probe</text>
+
+    <rect x="340" y="230" width="220" height="90" rx="12" fill="url(#glass)" stroke="url(#accent)" stroke-width="2"/>
+    <text x="360" y="258" fill="#eafbff" font-size="15" font-weight="600">AeroWM</text>
+    <text x="360" y="281" fill="#a9e9ff" font-size="12">Workspaces · focus · input</text>
+    <text x="360" y="299" fill="#a9e9ff" font-size="12">SHM import · xdg-shell</text>
+
+    <rect x="340" y="356" width="220" height="76" rx="12" fill="#0a1628" stroke="#7ddcff" stroke-opacity="0.35" stroke-dasharray="5 4"/>
+    <text x="360" y="384" fill="#eafbff" font-size="15" font-weight="600">Smithay 0.3</text>
+    <text x="360" y="406" fill="#a9e9ff" font-size="12">winit backend → host X11 / Wayland</text>
+
+    <path d="M150 186 L150 205 L450 205 L450 230" fill="none" stroke="#7ddcff" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M450 186 L450 230" fill="none" stroke="#7ddcff" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M750 186 L750 205 L450 205 L450 230" fill="none" stroke="#7ddcff" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M450 320 L450 356" fill="none" stroke="#7ddcff" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="40" y="356" width="220" height="76" rx="12" fill="#0a1628" stroke="#00f5d4" stroke-opacity="0.35"/>
+    <text x="60" y="384" fill="#eafbff" font-size="14" font-weight="600">design-tokens.toml</text>
+    <text x="60" y="406" fill="#a9e9ff" font-size="12">Colors · spacing · motion</text>
+
+    <rect x="640" y="356" width="220" height="76" rx="12" fill="#0a1628" stroke="#00f5d4" stroke-opacity="0.35"/>
+    <text x="660" y="384" fill="#eafbff" font-size="14" font-weight="600">archiso profile</text>
+    <text x="660" y="406" fill="#a9e9ff" font-size="12">Packages · live session · boot</text>
+  </g>
+</svg>

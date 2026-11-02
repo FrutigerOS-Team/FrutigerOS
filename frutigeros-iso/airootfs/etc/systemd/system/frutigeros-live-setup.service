@@ -1,0 +1,14 @@
+[Unit]
+Description=FrutigerOS live environment setup
+DefaultDependencies=no
+After=local-fs.target
+Before=getty@tty1.service
+ConditionPathExists=/usr/local/bin/frutigeros-live-setup
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/frutigeros-live-setup --quiet
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

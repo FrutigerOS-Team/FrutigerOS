@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Getting started — FrutigerOS Docs</title>
+  <meta name="description" content="Build FrutigerOS components and run the test suite.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt=""><span>FrutigerOS<small>DOCUMENTATION</small></span></a>
+    <div class="topbar-spacer"></div>
+    <div class="search"><input type="search" placeholder="Filter pages…  (press /)" aria-label="Filter navigation"></div>
+    <button class="icon-button" data-theme-toggle type="button" aria-label="Toggle theme">☀</button>
+    <button class="icon-button menu-button" data-menu-toggle type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-group"><h2>Start here</h2><ul>
+        <li><a href="../index.html">Overview</a></li>
+        <li><a href="getting-started.html" aria-current="page">Getting started</a></li>
+        <li><a href="installation.html">Installation</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Desktop</h2><ul>
+        <li><a href="aerowm.html">AeroWM</a></li>
+        <li><a href="aeroshell.html">AeroShell</a></li>
+        <li><a href="applications.html">Applications</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Project</h2><ul>
+        <li><a href="architecture.html">Architecture</a></li>
+        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+        <li><a href="contributing.html">Contributing</a></li>
+      </ul></div>
+    </aside>
+
+    <main class="content">
+      <h1>Getting started</h1>
+      <p class="lede">Build every Rust component, run the tests, and start AeroWM inside your current desktop session.</p>
+
+      <div class="note">
+        <strong>Repository layout.</strong> AeroWM, AeroShell and AeroInstaller are standalone
+        Cargo crates. The nine applications form a workspace under <code>aero-apps/</code>.
+        There is no root workspace, so run Cargo from the crate directory.
+      </div>
+
+      <h2>Prerequisites</h2>
+      <p>The development environment targets Arch Linux. Install the toolchain and the native libraries used by Smithay, Wayland clients and the panel renderer.</p>
+      <pre><code>sudo pacman -S --needed base-devel rustup pkgconf \
+  wayland wayland-protocols libxkbcommon mesa \
+  libinput libseat libdisplay-info libudev-zero \
+  fontconfig freetype2
+
+rustup default stable</code></pre>
+      <p>Rust 1.75 or newer is required. The crates use Smithay 0.3, <code>tiny-skia</code> and <code>wayland-client</code>.</p>
+
+      <h2>Fetch the source</h2>
+      <pre><code>git clone https://github.com/frutigeros/frutigeros.git
+cd frutigeros</code></pre>
+
+      <h2>Build and test</h2>
+      <p>Run each crate independently. Formatting must be clean before a pull request is merged.</p>
+      <pre><code># AeroWM compositor
+cd aerowm
+cargo fmt --check
+cargo test
+
+# AeroShell panel
+cd ../aeroshell
+cargo fmt --check
+cargo test
+
+# AeroInstaller
+cd ../aero-installer
+cargo fmt --check
+cargo test
+
+# Native applications (workspace)
+cd ../aero-apps
+cargo fmt --all --check
+cargo test --workspace</code></pre>
+
+      <p>At the time of writing the suites report:</p>
+      <table>
+        <thead><tr><th>Crate</th><th>Tests</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>aerowm</code></td><td>23</td><td>config, input, workspace, effects, render</td></tr>
+          <tr><td><code>aeroshell</code></td><td>23</td><td>panel layout/render, glyphs, launcher, notifications</td></tr>
+          <tr><td><code>aero-installer</code></td><td>18</td><td>steps, disk planning, command planner</td></tr>
+          <tr><td><code>aero-apps</code></td><td>32</td><td>nine application crates</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Run AeroWM</h2>
+      <p>
+        AeroWM currently uses the Smithay <strong>winit</strong> backend: it opens a window
+        inside an existing X11 or Wayland session. Native DRM/KMS startup is not implemented yet.
+      </p>
+      <pre><code>cd aerowm
+cargo run</code></pre>
+      <p>The log prints the Wayland socket it created, for example:</p>
+      <pre><code>[INFO] WAYLAND_DISPLAY=wayland-1
+[INFO] Clients can connect: WAYLAND_DISPLAY=wayland-1 &lt;app&gt;</code></pre>
+
+      <h2>Run AeroShell</h2>
+      <p>In a second terminal, point AeroShell at that socket. The panel creates an xdg toplevel with <code>app_id=frutigeros-aeropanel</code>; AeroWM recognises it and pins it to the bottom of the screen.</p>
+      <pre><code>cd aeroshell
+WAYLAND_DISPLAY=wayland-1 cargo run</code></pre>
+      <p>You should see a deep-ocean glass bar with a start orb, four workspace dots, a clock and tray glyphs.</p>
+
+      <h2>Next steps</h2>
+      <ul>
+        <li>Read <a href="aerowm.html">AeroWM internals</a> to understand how surfaces are mapped and focused.</li>
+        <li>Read <a href="aeroshell.html">AeroShell</a> for the panel renderer and layout engine.</li>
+        <li>Try the <a href="installation.html">installer dry-run</a> — it never writes to disk.</li>
+      </ul>
+
+      <div class="page-nav">
+        <a href="../index.html"><span>Previous</span>← Overview</a>
+        <a class="next" href="installation.html"><span>Next</span>Installation →</a>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">FrutigerOS documentation · MIT licensed · <a href="contributing.html">Contributing</a></footer>
+  <script src="../assets/docs.js"></script>
+</body>
+</html>

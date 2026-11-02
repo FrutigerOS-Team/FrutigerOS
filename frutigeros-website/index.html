@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FrutigerOS — Tomorrow, Reimagined.</title>
+  <meta name="description" content="An Arch Linux distribution inspired by the Frutiger Aero aesthetic. The future that people imagined in 2008." />
+  <meta property="og:title" content="FrutigerOS — Tomorrow, Reimagined." />
+  <meta property="og:description" content="An Arch Linux distribution with a custom Wayland compositor and Frutiger Aero design." />
+  <meta property="og:type" content="website" />
+  <link rel="stylesheet" href="src/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ── Navigation ────────────────────────────────────────────────────────── -->
+<nav class="nav glass-nav" aria-label="Primary navigation">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" aria-label="FrutigerOS home">
+      <span class="logo-mark" aria-hidden="true">◈</span>
+      <span class="logo-text">FrutigerOS</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#aerowm">AeroWM</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="https://github.com/frutigeros" target="_blank" rel="noopener">GitHub ↗</a></li>
+    </ul>
+    <a href="#download" class="btn btn-primary btn-sm">Download Alpha</a>
+  </div>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<section class="hero" aria-label="Hero section">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="hero-grid"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge glass-badge">
+      <span class="badge-dot" aria-hidden="true"></span>
+      Pre-Alpha · Open Source · Arch Linux
+    </div>
+
+    <h1 class="hero-title">
+      Tomorrow,<br />
+      <span class="gradient-text">Reimagined.</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      An Arch-based Linux experience inspired by the future we once imagined.<br />
+      Custom Wayland compositor. Frutiger Aero design. Built from scratch.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#download" class="btn btn-primary btn-lg">
+        <span>Download FrutigerOS</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M8 2v8M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="https://github.com/frutigeros" target="_blank" rel="noopener" class="btn btn-ghost btn-lg">
+        View on GitHub ↗
+      </a>
+    </div>
+
+    <!-- Desktop mockup -->
+    <div class="hero-mockup" aria-label="FrutigerOS desktop preview" role="img">
+      <div class="mockup-screen glass-card">
+        <div class="mockup-titlebar">
+          <span class="titlebar-btn titlebar-close" aria-hidden="true"></span>
+          <span class="titlebar-btn titlebar-min" aria-hidden="true"></span>
+          <span class="titlebar-btn titlebar-max" aria-hidden="true"></span>
+          <span class="titlebar-title">AeroFiles — Home</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-sidebar">
+            <div class="sidebar-item active">
+              <span aria-hidden="true">⌂</span> Home
+            </div>
+            <div class="sidebar-item"><span aria-hidden="true">📁</span> Documents</div>
+            <div class="sidebar-item"><span aria-hidden="true">🖼</span> Pictures</div>
+            <div class="sidebar-item"><span aria-hidden="true">🎵</span> Music</div>
+          </div>
+          <div class="mockup-content">
+            <div class="file-grid">
+              <div class="file-item glass-item">
+                <div class="file-icon" aria-hidden="true">📁</div>
+                <div class="file-name">Documents</div>
+              </div>
+              <div class="file-item glass-item">
+                <div class="file-icon" aria-hidden="true">🖼</div>
+                <div class="file-name">Pictures</div>
+              </div>
+              <div class="file-item glass-item">
+                <div class="file-icon" aria-hidden="true">🎵</div>
+                <div class="file-name">Music</div>
+              </div>
+              <div class="file-item glass-item">
+                <div class="file-icon" aria-hidden="true">⬇</div>
+                <div class="file-name">Downloads</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Taskbar -->
+        <div class="mockup-panel glass-panel">
+          <div class="panel-start" aria-label="Start button">◈</div>
+          <div class="panel-workspaces" aria-label="Workspaces">
+            <span class="ws-dot ws-active" aria-label="Workspace 1, active"></span>
+            <span class="ws-dot" aria-label="Workspace 2"></span>
+            <span class="ws-dot" aria-label="Workspace 3"></span>
+            <span class="ws-dot" aria-label="Workspace 4"></span>
+          </div>
+          <div class="panel-spacer"></div>
+          <div class="panel-clock" aria-label="System clock">14:32</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Features ──────────────────────────────────────────────────────────── -->
+<section class="features section" id="features" aria-labelledby="features-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 id="features-heading" class="section-title">Built different.</h2>
+      <p class="section-subtitle">Not a themed desktop. A completely custom operating system.</p>
+    </div>
+
+    <div class="features-grid">
+
+      <article class="feature-card glass-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill="url(#grad1)" opacity="0.3"/>
+            <rect x="4" y="4" width="24" height="24" rx="6" stroke="url(#grad1)" stroke-width="1.5"/>
+            <path d="M10 16l4 4 8-8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="grad1" x1="4" y1="4" x2="28" y2="28">
+                <stop offset="0%" stop-color="#00AEEF"/>
+                <stop offset="100%" stop-color="#00F5D4"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h3 class="feature-title">AeroWM</h3>
+        <p class="feature-desc">
+          A Wayland compositor built in Rust with Smithay. Glass blur, smooth animations,
+          rounded corners, workspace management. Phase 2 implemented.
+        </p>
+        <div class="feature-tag">Rust · Smithay · Wayland</div>
+      </article>
+
+      <article class="feature-card glass-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="12" stroke="url(#grad2)" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="16" cy="16" r="7" fill="url(#grad2)" opacity="0.3"/>
+            <circle cx="16" cy="16" r="3" fill="url(#grad2)"/>
+            <defs>
+              <linearGradient id="grad2" x1="4" y1="4" x2="28" y2="28">
+                <stop offset="0%" stop-color="#7DDCFF"/>
+                <stop offset="100%" stop-color="#00AEEF"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h3 class="feature-title">Frutiger Aero</h3>
+        <p class="feature-desc">
+          Glassmorphism, soft gradients, organic shapes, nature-inspired wallpapers.
+          The visual language of 2008's optimistic future, fully realized.
+        </p>
+        <div class="feature-tag">Design System · Tokens · Glass</div>
+      </article>
+
+      <article class="feature-card glass-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <path d="M8 8h16v12a4 4 0 01-4 4H12a4 4 0 01-4-4V8z" stroke="url(#grad3)" stroke-width="1.5" fill="url(#grad3)" fill-opacity="0.2"/>
+            <path d="M6 8h20M12 8V6M20 8V6" stroke="url(#grad3)" stroke-width="1.5" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="grad3" x1="6" y1="6" x2="26" y2="24">
+                <stop offset="0%" stop-color="#7ED957"/>
+                <stop offset="100%" stop-color="#00F5D4"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h3 class="feature-title">Arch Foundation</h3>
+        <p class="feature-desc">
+          Built on Arch Linux for bleeding-edge packages, full control, and a rolling release
+          model. pacman + AUR. systemd. PipeWire. NetworkManager.
+        </p>
+        <div class="feature-tag">Arch · pacman · Rolling Release</div>
+      </article>
+
+      <article class="feature-card glass-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="6" y="10" width="20" height="14" rx="3" stroke="url(#grad4)" stroke-width="1.5" fill="url(#grad4)" fill-opacity="0.15"/>
+            <path d="M6 14h20" stroke="url(#grad4)" stroke-width="1"/>
+            <circle cx="10" cy="12" r="1" fill="url(#grad4)"/>
+            <circle cx="14" cy="12" r="1" fill="url(#grad4)"/>
+            <defs>
+              <linearGradient id="grad4" x1="6" y1="10" x2="26" y2="24">
+                <stop offset="0%" stop-color="#00AEEF"/>
+                <stop offset="100%" stop-color="#7DDCFF"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h3 class="feature-title">AeroShell</h3>
+        <p class="feature-desc">
+          A complete desktop shell with a glass panel, AeroStart launcher,
+          workspace overview, quick settings, and notification center.
+        </p>
+        <div class="feature-tag">Panel · Launcher · Notifications</div>
+      </article>
+
+      <article class="feature-card glass-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <path d="M16 4l10 6v12l-10 6L6 22V10L16 4z" stroke="url(#grad5)" stroke-width="1.5" fill="url(#grad5)" fill-opacity="0.15"/>
+            <path d="M16 4v24M6 10l10 6 10-6" stroke="url(#grad5)" stroke-width="1" opacity="0.5"/>
+            <defs>
+              <linearGradient id="grad5" x1="6" y1="4" x2="26" y2="28">
+                <stop offset="0%" stop-color="#7ED957"/>
+                <stop offset="100%" stop-color="#00AEEF"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h3 class="feature-title">Native Apps</h3>
+        <p class="feature-desc">
+          AeroFiles, AeroTerminal, AeroSettings, AeroSoftware. Each app shares
+          the same Aero Glass design language. Phase 6 in development.
+        </p>
+        <div class="feature-tag">Rust · GTK · Native</div>
+      </article>
+
+      <article class="feature-card glass-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="10" stroke="url(#grad6)" stroke-width="1.5" fill="none"/>
+            <path d="M16 8v8l5 3" stroke="url(#grad6)" stroke-width="1.5" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="grad6" x1="6" y1="6" x2="26" y2="26">
+                <stop offset="0%" stop-color="#00F5D4"/>
+                <stop offset="100%" stop-color="#00AEEF"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h3 class="feature-title">Open Alpha Soon</h3>
+        <p class="feature-desc">
+          Phase 5 will produce a bootable ISO. Built and tested in QEMU before
+          public release. No fake download counts. No fake stars.
+        </p>
+        <div class="feature-tag">archiso · UEFI · QEMU</div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── AeroWM ─────────────────────────────────────────────────────────────── -->
+<section class="aerowm-section section" id="aerowm" aria-labelledby="aerowm-heading">
+  <div class="container">
+    <div class="aerowm-layout">
+      <div class="aerowm-text">
+        <div class="section-eyebrow">The Heart of FrutigerOS</div>
+        <h2 id="aerowm-heading" class="section-title">AeroWM</h2>
+        <p class="aerowm-desc">
+          A custom Wayland compositor built entirely in Rust using the Smithay framework.
+          AeroWM is not a fork, not a config file. It is a real compositor written
+          from scratch, with FrutigerOS's visual identity baked in at the lowest level.
+        </p>
+
+        <ul class="aerowm-features" role="list">
+          <li>
+            <span class="check-icon" aria-hidden="true">✓</span>
+            Wayland compositor with XDG shell support
+          </li>
+          <li>
+            <span class="check-icon" aria-hidden="true">✓</span>
+            Workspace management with focus cycling
+          </li>
+          <li>
+            <span class="check-icon" aria-hidden="true">✓</span>
+            Aero Glass material system (blur, transparency, gradients)
+          </li>
+          <li>
+            <span class="check-icon" aria-hidden="true">✓</span>
+            Smooth spring-based animations
+          </li>
+          <li>
+            <span class="check-icon" aria-hidden="true">✓</span>
+            Floating, tiling, and hybrid layout modes
+          </li>
+          <li>
+            <span class="check-icon" aria-hidden="true">✓</span>
+            TOML configuration — no scripting languages required
+          </li>
+        </ul>
+
+        <div class="aerowm-status glass-badge">
+          <span class="badge-dot badge-dot-green" aria-hidden="true"></span>
+          Phase 2 implemented · 30 unit tests passing
+        </div>
+      </div>
+
+      <div class="aerowm-code-panel glass-card" aria-label="AeroWM configuration example">
+        <div class="code-header">
+          <span class="code-lang">~/.config/aerowm/config.toml</span>
+        </div>
+        <pre class="code-block"><code><span class="tok-comment"># AeroWM configuration</span>
+
+<span class="tok-section">[appearance]</span>
+<span class="tok-key">corner_radius</span>  = <span class="tok-num">12</span>
+<span class="tok-key">blur_strength</span>  = <span class="tok-num">20</span>
+<span class="tok-key">glass_opacity</span>  = <span class="tok-num">0.82</span>
+<span class="tok-key">border_active</span>  = <span class="tok-str">"#00AEEFcc"</span>
+<span class="tok-key">animation_speed</span> = <span class="tok-num">1.0</span>
+
+<span class="tok-section">[workspaces]</span>
+<span class="tok-key">count</span>          = <span class="tok-num">4</span>
+<span class="tok-key">default_layout</span> = <span class="tok-str">"floating"</span>
+
+<span class="tok-section">[keybindings]</span>
+<span class="tok-key">modifier</span>       = <span class="tok-str">"super"</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Roadmap ────────────────────────────────────────────────────────────── -->
+<section class="roadmap-section section" id="roadmap" aria-labelledby="roadmap-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 id="roadmap-heading" class="section-title">Roadmap</h2>
+      <p class="section-subtitle">Honest progress. No fake milestones.</p>
+    </div>
+
+    <div class="roadmap-timeline" role="list">
+
+      <div class="roadmap-item roadmap-done" role="listitem">
+        <div class="roadmap-marker done" aria-label="Complete">✓</div>
+        <div class="roadmap-content glass-card">
+          <div class="roadmap-phase">Phase 1</div>
+          <h3 class="roadmap-title">Foundation</h3>
+          <p>Project structure, GitHub setup, AeroWM skeleton, design system, documentation.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-item roadmap-done" role="listitem">
+        <div class="roadmap-marker done" aria-label="Complete">✓</div>
+        <div class="roadmap-content glass-card">
+          <div class="roadmap-phase">Phase 2</div>
+          <h3 class="roadmap-title">AeroWM Core</h3>
+          <p>Smithay Wayland compositor, XDG shell, input handling, workspace management, SHM rendering.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-item roadmap-done" role="listitem">
+        <div class="roadmap-marker done" aria-label="Complete">✓</div>
+        <div class="roadmap-content glass-card">
+          <div class="roadmap-phase">Phase 3</div>
+          <h3 class="roadmap-title">AeroShell</h3>
+          <p>Panel layout engine, AeroStart app discovery and search, notification manager, AeroGlass widget system.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-item roadmap-active" role="listitem">
+        <div class="roadmap-marker active" aria-label="In progress">◉</div>
+        <div class="roadmap-content glass-card glass-card-active">
+          <div class="roadmap-phase">Phase 4</div>
+          <h3 class="roadmap-title">Visual Identity</h3>
+          <p>Aero Glass shader, panel rendering with tiny-skia, wallpaper set, icon theme, window animations.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-item" role="listitem">
+        <div class="roadmap-marker" aria-label="Planned">○</div>
+        <div class="roadmap-content glass-card">
+          <div class="roadmap-phase">Phase 5</div>
+          <h3 class="roadmap-title">Installer &amp; ISO</h3>
+          <p>archiso configuration, AeroInstaller GUI, UEFI boot, Btrfs support, QEMU testing.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-item" role="listitem">
+        <div class="roadmap-marker" aria-label="Planned">○</div>
+        <div class="roadmap-content glass-card">
+          <div class="roadmap-phase">Phase 6–8</div>
+          <h3 class="roadmap-title">Apps · Docs · Alpha</h3>
+          <p>Native apps, documentation portal, community testing, first public ISO release.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Download ───────────────────────────────────────────────────────────── -->
+<section class="download-section section" id="download" aria-labelledby="download-heading">
+  <div class="container">
+    <div class="download-card glass-card">
+      <h2 id="download-heading" class="download-title gradient-text">Not ready to install yet.</h2>
+      <p class="download-sub">
+        FrutigerOS is in active development. There is no installable ISO.
+        Follow along on GitHub and join the community to help build it.
+      </p>
+      <div class="download-actions">
+        <a href="https://github.com/frutigeros" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+          Follow on GitHub
+        </a>
+        <a href="https://github.com/frutigeros/frutigeros/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" class="btn btn-ghost btn-lg">
+          Contribute
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-mark" aria-hidden="true">◈</span>
+        <span class="logo-text">FrutigerOS</span>
+        <p class="footer-tagline">Tomorrow, Reimagined.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="https://github.com/frutigeros" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/frutigeros/frutigeros/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contribute</a>
+        <a href="https://github.com/frutigeros/frutigeros/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+        <a href="https://github.com/frutigeros/frutigeros/blob/main/CODE_OF_CONDUCT.md" target="_blank" rel="noopener">Code of Conduct</a>
+      </nav>
+    </div>
+    <p class="footer-copy">
+      © 2026 FrutigerOS Contributors. Open source under MIT.
+      FrutigerOS is not affiliated with Microsoft, Apple, or any commercial entity.
+    </p>
+  </div>
+</footer>
+
+<script src="src/app.js"></script>
+</body>
+</html>

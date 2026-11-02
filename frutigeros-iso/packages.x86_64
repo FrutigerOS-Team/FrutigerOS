@@ -1,0 +1,95 @@
+# FrutigerOS ISO package list (x86_64)
+# These packages are installed into the live environment.
+#
+# Base system
+base
+base-devel
+linux
+linux-firmware
+linux-headers
+intel-ucode
+amd-ucode
+
+# Core utilities
+systemd
+systemd-sysvcompat
+bash
+coreutils
+util-linux
+procps-ng
+psmisc
+findutils
+grep
+gawk
+sed
+less
+diffutils
+which
+file
+nano
+vim
+
+# Filesystem tools
+btrfs-progs
+e2fsprogs
+dosfstools
+exfatprogs
+ntfs-3g
+gptfdisk
+parted
+lvm2
+
+# Network
+networkmanager
+nm-connection-editor
+iwd
+wpa_supplicant
+openssh
+curl
+wget
+bind-tools
+
+# Audio
+pipewire
+pipewire-alsa
+pipewire-pulse
+pipewire-jack
+wireplumber
+alsa-utils
+
+# Display
+wayland
+xorg-server
+xorg-xinit
+xorg-xwayland
+mesa
+libva-mesa-driver
+vulkan-radeon
+vulkan-intel
+# nvidia-open  # optional: add for NVIDIA support
+
+# Fonts
+ttf-inter
+ttf-jetbrains-mono
+noto-fonts
+noto-fonts-emoji
+
+# FrutigerOS desktop (from frutigeros custom repo)
+# Uncomment when packages are built:
+# aerowm
+# aeroshell
+# aero-installer
+# frutigeros-wallpapers
+# frutigeros-themes
+# frutigeros-icons
+
+# Installer dependencies
+python
+python-pyparted
+
+# Development tools (live environment only)
+git
+
+# Accessibility
+orca
+brltty

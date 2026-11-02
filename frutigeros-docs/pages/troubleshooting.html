@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Troubleshooting — FrutigerOS Docs</title>
+  <meta name="description" content="Common FrutigerOS build and runtime problems.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt=""><span>FrutigerOS<small>DOCUMENTATION</small></span></a>
+    <div class="topbar-spacer"></div>
+    <div class="search"><input type="search" placeholder="Filter pages…  (press /)" aria-label="Filter navigation"></div>
+    <button class="icon-button" data-theme-toggle type="button" aria-label="Toggle theme">☀</button>
+    <button class="icon-button menu-button" data-menu-toggle type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-group"><h2>Start here</h2><ul>
+        <li><a href="../index.html">Overview</a></li>
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="installation.html">Installation</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Desktop</h2><ul>
+        <li><a href="aerowm.html">AeroWM</a></li>
+        <li><a href="aeroshell.html">AeroShell</a></li>
+        <li><a href="applications.html">Applications</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Project</h2><ul>
+        <li><a href="architecture.html">Architecture</a></li>
+        <li><a href="troubleshooting.html" aria-current="page">Troubleshooting</a></li>
+        <li><a href="contributing.html">Contributing</a></li>
+      </ul></div>
+    </aside>
+
+    <main class="content">
+      <h1>Troubleshooting</h1>
+      <p class="lede">Symptoms we have actually hit while developing the tree, and how to diagnose them.</p>
+
+      <h2>Build failures</h2>
+
+      <h3><code>pkg-config</code> cannot find <code>wayland-client</code></h3>
+      <p>Install the Wayland development packages and <code>pkgconf</code>:</p>
+      <pre><code>sudo pacman -S wayland wayland-protocols pkgconf libxkbcommon</code></pre>
+
+      <h3>Smithay fails to compile against a newer Rust</h3>
+      <p>Smithay 0.3 is pinned. The warning about future-incompatible code comes from the dependency, not from FrutigerOS. Build with the current stable toolchain and do not patch the lockfile unless you intend to migrate the compositor.</p>
+      <pre><code>rustup update stable
+rustc --version   # 1.75 or newer</code></pre>
+
+      <h3><code>cargo fmt --check</code> fails on a crate you did not touch</h3>
+      <p>Formatting is per-crate. Run it from the crate root, and for the applications workspace use <code>--all</code>:</p>
+      <pre><code>(cd aerowm &amp;&amp; cargo fmt)
+(cd aeroshell &amp;&amp; cargo fmt)
+(cd aero-installer &amp;&amp; cargo fmt)
+(cd aero-apps &amp;&amp; cargo fmt --all)</code></pre>
+
+      <h2>Runtime problems</h2>
+
+      <h3>AeroWM exits immediately: cannot create a window</h3>
+      <p>The winit backend needs a host display. Check that <code>WAYLAND_DISPLAY</code> or <code>DISPLAY</code> is set and points at a live compositor. Running from a bare TTY will fail by design.</p>
+      <pre><code>echo "$WAYLAND_DISPLAY"
+echo "$DISPLAY"
+loginctl show-session "$XDG_SESSION_ID" -p Type</code></pre>
+
+      <h3>AeroShell connects but no panel appears</h3>
+      <ul>
+        <li>Check that <code>WAYLAND_DISPLAY</code> matches the socket printed by AeroWM (often <code>wayland-1</code>, not <code>wayland-0</code>).</li>
+        <li>Look for the <code>Promoting surface … to AeroPanel</code> log line in AeroWM.</li>
+        <li>The panel is only promoted after its first commit; wait a frame.</li>
+        <li>Confirm <code>app_id</code> is exactly <code>frutigeros-aeropanel</code>.</li>
+      </ul>
+
+      <h3>The panel shows the wrong active workspace</h3>
+      <p>Expected. There is no AeroWM → AeroShell IPC yet, so the panel always renders workspace 0 as active. This is a known limitation, not a configuration error.</p>
+
+      <h3>Panel text is missing glyphs</h3>
+      <p>The built-in 5×7 font only covers digits, A–Z, space and a few punctuation marks. Lower-case input is rendered as-is; unsupported glyphs are blank. This avoids a fontconfig dependency on the live medium.</p>
+
+      <h2>Installer</h2>
+
+      <h3>“no partition plan” error</h3>
+      <p>The <code>Installing</code> step ran before <code>Partitioning</code>. In the CLI wizard this cannot happen; if you drive <code>InstallerState</code> programmatically, set <code>choices.partition_plan</code> first.</p>
+
+      <h3><code>--apply</code> refuses to run</h3>
+      <p>Destructive execution requires both <code>--apply</code> and <code>--yes</code>. This is intentional. Run without flags to inspect the plan.</p>
+      <pre><code>cargo run                 # dry-run
+cargo run -- --apply --yes  # destructive</code></pre>
+
+      <h3><code>lsblk: not found</code></h3>
+      <p>Install <code>util-linux</code>. The installer probes disks with <code>lsblk --json</code> and does not fall back to parsing <code>/proc/partitions</code>.</p>
+
+      <h2>ISO</h2>
+
+      <h3><code>build.sh</code> says <code>mkarchiso</code> was not found</h3>
+      <p>Install <code>archiso</code> on Arch Linux: <code>sudo pacman -S archiso</code>. Profile validation (<code>./build.sh --check</code>) works without it.</p>
+
+      <h3>The live session drops to a shell</h3>
+      <p>Expected on bare metal today. <code>frutigeros-session</code> looks for an existing <code>DISPLAY</code>/<code>WAYLAND_DISPLAY</code>; AeroWM has no DRM backend yet. Start Xorg or run inside a nested compositor.</p>
+
+      <h3>QEMU boots to an <code>archiso</code> “medium not found” prompt</h3>
+      <p>The <code>archisolabel</code> in the boot entry must match the generated ISO label. The profile uses <code>%ARCHISO_LABEL%</code>; if you edited it to a literal, rebuild the ISO.</p>
+
+      <div class="page-nav">
+        <a href="architecture.html"><span>Previous</span>← Architecture</a>
+        <a class="next" href="contributing.html"><span>Next</span>Contributing →</a>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">FrutigerOS documentation · MIT licensed · <a href="contributing.html">Contributing</a></footer>
+  <script src="../assets/docs.js"></script>
+</body>
+</html>

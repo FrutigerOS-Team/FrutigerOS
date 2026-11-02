@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Architecture — FrutigerOS Docs</title>
+  <meta name="description" content="How FrutigerOS components fit together.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt=""><span>FrutigerOS<small>DOCUMENTATION</small></span></a>
+    <div class="topbar-spacer"></div>
+    <div class="search"><input type="search" placeholder="Filter pages…  (press /)" aria-label="Filter navigation"></div>
+    <button class="icon-button" data-theme-toggle type="button" aria-label="Toggle theme">☀</button>
+    <button class="icon-button menu-button" data-menu-toggle type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-group"><h2>Start here</h2><ul>
+        <li><a href="../index.html">Overview</a></li>
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="installation.html">Installation</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Desktop</h2><ul>
+        <li><a href="aerowm.html">AeroWM</a></li>
+        <li><a href="aeroshell.html">AeroShell</a></li>
+        <li><a href="applications.html">Applications</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Project</h2><ul>
+        <li><a href="architecture.html" aria-current="page">Architecture</a></li>
+        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+        <li><a href="contributing.html">Contributing</a></li>
+      </ul></div>
+    </aside>
+
+    <main class="content">
+      <h1>Architecture</h1>
+      <p class="lede">FrutigerOS is a collection of small Rust programs with explicit boundaries rather than a single monolith.</p>
+
+      <div class="hero">
+        <img src="../assets/architecture.svg" alt="Diagram: Aero apps, AeroShell and AeroInstaller sit above AeroWM, which sits above Smithay's winit backend.">
+      </div>
+
+      <h2>Repository boundaries</h2>
+      <p>There is no root Cargo workspace. This is deliberate: each component can be versioned, packaged and tested independently.</p>
+      <table>
+        <thead><tr><th>Path</th><th>Type</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><code>aerowm/</code></td><td>Binary crate</td><td>Wayland compositor</td></tr>
+          <tr><td><code>aeroshell/</code></td><td>Binary crate</td><td>Panel, launcher, notifications</td></tr>
+          <tr><td><code>aero-installer/</code></td><td>Binary crate</td><td>Installation wizard and command planner</td></tr>
+          <tr><td><code>aero-apps/</code></td><td>Workspace, 9 members</td><td>Native applications</td></tr>
+          <tr><td><code>frutigeros-iso/</code></td><td>archiso profile</td><td>Live medium and boot configuration</td></tr>
+          <tr><td><code>frutigeros-docs/</code></td><td>Static site</td><td>This documentation</td></tr>
+          <tr><td><code>frutigeros-website/</code></td><td>Static site</td><td>Project landing page</td></tr>
+          <tr><td><code>design-tokens.toml</code></td><td>Data</td><td>Shared palette, typography, spacing, motion</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Compositor boundary</h2>
+      <p>
+        AeroWM is the only component that speaks the Wayland <em>server</em> protocol. It owns
+        the socket and the display. Everything else is a client. This keeps privilege and
+        protocol complexity in one place.
+      </p>
+      <pre><code>client (AeroShell, AeroFiles, …)
+        │  wl_compositor / wl_shm / xdg_wm_base
+        ▼
+AeroWM  ──► Smithay 0.3 ──► winit (host window)
+        │
+        └── workspace, focus, input, panel policy</code></pre>
+
+      <h2>No compositor IPC yet</h2>
+      <p>
+        The panel knows the active workspace only because the layout engine is passed a
+        number; there is no channel from AeroWM. The planned fix is a small private protocol
+        (or a Unix socket message bus) carrying workspace changes, focused app id and panel
+        geometry. Until then the panel renders workspace 0 as active.
+      </p>
+
+      <h2>Design tokens</h2>
+      <p>
+        <code>design-tokens.toml</code> is the single source of truth for the palette and
+        spacing. The website, docs and shell currently duplicate the values in CSS/constants;
+        AeroWM parses its own TOML config. A future generator can emit CSS variables and Rust
+        constants from the same file to prevent drift.
+      </p>
+
+      <h2>Packaging plan</h2>
+      <ol>
+        <li>Build release binaries for AeroWM, AeroShell and AeroInstaller.</li>
+        <li>Package them with <code>PKGBUILD</code> files and install desktop entries/icons.</li>
+        <li>Publish packages to a signed local repository.</li>
+        <li>Enable that repository in <code>frutigeros-iso/pacman.conf</code>.</li>
+        <li>Build and boot-test the ISO in QEMU, then on real hardware.</li>
+      </ol>
+
+      <div class="note">
+        <strong>Testing strategy.</strong> Pure logic (layout, parsing, planning, config) is
+        unit-tested. Integration boundaries (Wayland, disk, pacman, QEMU) require manual or
+        harness testing; those results must be recorded in the changelog before a feature is
+        called complete.
+      </div>
+
+      <div class="page-nav">
+        <a href="applications.html"><span>Previous</span>← Applications</a>
+        <a class="next" href="troubleshooting.html"><span>Next</span>Troubleshooting →</a>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">FrutigerOS documentation · MIT licensed · <a href="contributing.html">Contributing</a></footer>
+  <script src="../assets/docs.js"></script>
+</body>
+</html>

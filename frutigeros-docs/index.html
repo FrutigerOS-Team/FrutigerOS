@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FrutigerOS Documentation</title>
+  <meta name="description" content="Documentation for FrutigerOS, AeroWM, AeroShell and the native Aero applications.">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.svg" alt="">
+      <span>FrutigerOS<small>DOCUMENTATION</small></span>
+    </a>
+    <div class="topbar-spacer"></div>
+    <div class="search"><input type="search" placeholder="Filter pages…  (press /)" aria-label="Filter navigation"></div>
+    <button class="icon-button" data-theme-toggle type="button" aria-label="Toggle theme">☀</button>
+    <button class="icon-button menu-button" data-menu-toggle type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-group">
+        <h2>Start here</h2>
+        <ul>
+          <li><a href="index.html" aria-current="page">Overview</a></li>
+          <li><a href="pages/getting-started.html">Getting started</a></li>
+          <li><a href="pages/installation.html">Installation</a></li>
+        </ul>
+      </div>
+      <div class="nav-group">
+        <h2>Desktop</h2>
+        <ul>
+          <li><a href="pages/aerowm.html">AeroWM</a></li>
+          <li><a href="pages/aeroshell.html">AeroShell</a></li>
+          <li><a href="pages/applications.html">Applications</a></li>
+        </ul>
+      </div>
+      <div class="nav-group">
+        <h2>Project</h2>
+        <ul>
+          <li><a href="pages/architecture.html">Architecture</a></li>
+          <li><a href="pages/troubleshooting.html">Troubleshooting</a></li>
+          <li><a href="pages/contributing.html">Contributing</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="hero reveal">
+        <img src="assets/banner.svg" alt="FrutigerOS — Tomorrow, Reimagined. An Arch-based desktop built around AeroWM, AeroShell and Aero Glass.">
+      </div>
+
+      <h1>Documentation</h1>
+      <p class="lede">Everything you need to build, run and contribute to FrutigerOS — an Arch Linux desktop built around a Rust Wayland compositor.</p>
+
+      <div class="note warn">
+        <strong>Pre-alpha.</strong> No installable ISO has been boot-tested yet. The Rust
+        components build and their unit tests pass; the compositor, shell and installer are
+        under active development. Read the status table below before following a guide.
+      </div>
+
+      <div class="cards">
+        <a class="card" href="pages/getting-started.html">
+          <div class="card-icon">⚡</div>
+          <h3>Getting started</h3>
+          <p>Clone the repository, install build dependencies and run the test suite.</p>
+        </a>
+        <a class="card" href="pages/aerowm.html">
+          <div class="card-icon">🪟</div>
+          <h3>AeroWM</h3>
+          <p>The Smithay-based compositor: workspaces, focus, pointer input and panels.</p>
+        </a>
+        <a class="card" href="pages/aeroshell.html">
+          <div class="card-icon">🫧</div>
+          <h3>AeroShell</h3>
+          <p>The glass panel, AeroStart launcher and notification pipeline.</p>
+        </a>
+        <a class="card" href="pages/installation.html">
+          <div class="card-icon">💿</div>
+          <h3>Installation</h3>
+          <p>Build the archiso profile and run the installer in dry-run mode.</p>
+        </a>
+      </div>
+
+      <h2>What is FrutigerOS?</h2>
+      <p>
+        FrutigerOS is an open-source Linux distribution that takes the glossy,
+        nature-inspired optimism of the late-2000s Frutiger Aero aesthetic and builds it
+        properly on a modern foundation: Arch Linux, Wayland and Rust.
+      </p>
+      <p>
+        It is <strong>not</strong> a theme pack. The desktop is composed of first-party
+        software: <strong>AeroWM</strong> (compositor), <strong>AeroShell</strong> (panel and
+        shell services), <strong>AeroInstaller</strong>, and nine native applications.
+      </p>
+
+      <h2>Project status</h2>
+      <table>
+        <thead>
+          <tr><th>Component</th><th>State</th><th>Verified by</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>AeroWM</td><td><span class="badge progress">In progress</span></td><td>23 unit tests, <code>cargo check</code></td></tr>
+          <tr><td>AeroShell</td><td><span class="badge progress">In progress</span></td><td>23 unit tests, panel renderer</td></tr>
+          <tr><td>AeroInstaller</td><td><span class="badge progress">In progress</span></td><td>18 unit tests, dry-run CLI</td></tr>
+          <tr><td>Aero Apps</td><td><span class="badge progress">In progress</span></td><td>32 unit tests across 9 crates</td></tr>
+          <tr><td>ISO profile</td><td><span class="badge progress">In progress</span></td><td><code>build.sh --check</code></td></tr>
+          <tr><td>Documentation</td><td><span class="badge done">This site</span></td><td>Static HTML/CSS/JS</td></tr>
+          <tr><td>Public alpha</td><td><span class="badge blocked">Blocked</span></td><td>Needs packaged ISO + QEMU run</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Design principles</h2>
+      <ul>
+        <li><strong>Own the stack.</strong> Compositor, shell and apps are first-party code, not a themed GNOME or KDE session.</li>
+        <li><strong>Honest engineering.</strong> A feature is “done” only when it runs and has a test or a reproducible check.</li>
+        <li><strong>Accessible by default.</strong> Contrast, reduced motion, keyboard navigation and screen-reader labels are requirements.</li>
+        <li><strong>No proprietary store.</strong> Packages come from Arch repositories and the FrutigerOS repository.</li>
+      </ul>
+
+      <div class="page-nav">
+        <a class="next" href="pages/getting-started.html"><span>Next</span>Getting started →</a>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    FrutigerOS documentation · MIT licensed ·
+    <a href="../README.md">Repository</a> ·
+    <a href="pages/contributing.html">Contributing</a>
+  </footer>
+
+  <script src="assets/docs.js"></script>
+</body>
+</html>

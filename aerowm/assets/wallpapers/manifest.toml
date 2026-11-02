@@ -1,0 +1,80 @@
+# FrutigerOS Wallpaper Manifest
+# Each entry describes an original wallpaper for the distribution.
+# Actual image files will be added in Phase 4b.
+# All wallpapers must be original artwork — no copyrighted assets.
+
+[[wallpapers]]
+id       = "aurora-meadow"
+name     = "Aurora Meadow"
+file     = "aurora-meadow.png"
+thumb    = "aurora-meadow-thumb.png"
+author   = "FrutigerOS Team"
+license  = "CC0-1.0"
+tags     = ["nature", "green", "sky", "aero"]
+palette  = ["#7ED957", "#00AEEF", "#063B5C", "#EAFBFF"]
+description = """
+A lush green meadow under a blue sky with soft cloud formations.
+Foreground: rolling hills, dew-covered grass blades.
+Background: gradient sky from deep ocean blue to sky blue.
+Style: Frutiger Aero — glossy, optimistic, nature-forward.
+"""
+
+[[wallpapers]]
+id       = "water-glass"
+name     = "Water Glass"
+file     = "water-glass.png"
+thumb    = "water-glass-thumb.png"
+author   = "FrutigerOS Team"
+license  = "CC0-1.0"
+tags     = ["water", "blue", "glass", "aero", "abstract"]
+palette  = ["#00AEEF", "#7DDCFF", "#00F5D4", "#063B5C"]
+description = """
+Abstract water droplets on a glass surface backlit by blue light.
+Macro perspective, chromatic aberration at edges, shallow depth of field.
+Style: hyper-clean, glossy, 2008-era tech photography aesthetic.
+"""
+
+[[wallpapers]]
+id       = "sky-gradient"
+name     = "Sky Gradient"
+file     = "sky-gradient.png"
+thumb    = "sky-gradient-thumb.png"
+author   = "FrutigerOS Team"
+license  = "CC0-1.0"
+tags     = ["sky", "gradient", "minimal", "aero"]
+palette  = ["#020f1a", "#063B5C", "#00AEEF", "#7DDCFF", "#EAFBFF"]
+description = """
+A clean vertical gradient from deep midnight at the bottom to
+bright sky blue and glass white at the top. No foreground elements.
+Designed as a productivity wallpaper that doesn't compete with windows.
+"""
+
+[[wallpapers]]
+id       = "forest-light"
+name     = "Forest Light"
+file     = "forest-light.png"
+thumb    = "forest-light-thumb.png"
+author   = "FrutigerOS Team"
+license  = "CC0-1.0"
+tags     = ["nature", "forest", "green", "light", "aero"]
+palette  = ["#7ED957", "#063B5C", "#00AEEF", "#EAFBFF"]
+description = """
+Sunlight streaming through a canopy of leaves. Lens flare circles
+in blue and green. Ground covered in soft moss, small water droplets visible.
+Style: lush, glowing, Frutiger Aero nature category.
+"""
+
+[[wallpapers]]
+id       = "aero-abstract"
+name     = "Aero Abstract"
+file     = "aero-abstract.png"
+thumb    = "aero-abstract-thumb.png"
+author   = "FrutigerOS Team"
+license  = "CC0-1.0"
+tags     = ["abstract", "blue", "glass", "geometric"]
+palette  = ["#00AEEF", "#7DDCFF", "#00F5D4", "#7ED957"]
+description = """
+Overlapping translucent orbs and fluid shapes in Aero Blue and Aqua.
+Soft glows, no sharp edges. Inspired by Windows Vista's default wallpapers.
+Style: clean, techy, optimistic — the visual language of 2008's future.
+"""

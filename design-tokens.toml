@@ -1,0 +1,75 @@
+# FrutigerOS Design Tokens
+# Single source of truth for colors, typography, and spacing.
+# These values are consumed by AeroWM, AeroShell, and the website.
+
+[colors]
+# Primary palette
+aero_blue      = "#00AEEF"   # Primary brand / active borders
+sky_blue       = "#7DDCFF"   # Secondary / hover states
+aqua           = "#00F5D4"   # Accent / success
+glass_white    = "#EAFBFF"   # Surface tint (light mode)
+nature_green   = "#7ED957"   # Positive / online indicators
+deep_ocean     = "#063B5C"   # Dark surface / backgrounds
+
+# Glass surfaces
+glass_light    = "rgba(234,251,255,0.82)"   # Light mode window surface
+glass_dark     = "rgba(6,59,92,0.78)"       # Dark mode window surface
+glass_border   = "rgba(0,174,239,0.60)"     # Window border (active)
+glass_shadow   = "rgba(0,0,0,0.35)"         # Drop shadow
+
+# Semantic
+color_focus    = "#00AEEF"
+color_error    = "#FF4F4F"
+color_warning  = "#FFB800"
+color_success  = "#7ED957"
+color_text     = "#0A1628"      # Primary text (light mode)
+color_text_dim = "#4A7A9B"      # Secondary text
+
+[typography]
+font_ui        = "Inter"         # System UI font
+font_mono      = "JetBrains Mono" # Terminal / code
+font_display   = "Inter"         # Headings
+
+size_xs   = 11
+size_sm   = 13
+size_base = 15
+size_md   = 17
+size_lg   = 21
+size_xl   = 28
+size_2xl  = 36
+
+weight_regular = 400
+weight_medium  = 500
+weight_semibold = 600
+weight_bold    = 700
+
+[spacing]
+# Base-4 spacing scale (px)
+space_1  = 4
+space_2  = 8
+space_3  = 12
+space_4  = 16
+space_5  = 20
+space_6  = 24
+space_8  = 32
+space_10 = 40
+space_12 = 48
+space_16 = 64
+
+[radius]
+sm     = 4
+md     = 8
+lg     = 12    # Standard window corner
+xl     = 16
+full   = 9999  # Pill / circle
+
+[animation]
+# Duration in milliseconds
+duration_fast   = 120
+duration_normal = 220
+duration_slow   = 350
+
+# Spring parameters (for AeroWM spring_ease)
+spring_stiffness = 280.0
+spring_damping   = 22.0
+spring_mass      = 1.0

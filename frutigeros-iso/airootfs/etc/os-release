@@ -1,0 +1,11 @@
+NAME="FrutigerOS"
+PRETTY_NAME="FrutigerOS 0.1.0-alpha"
+ID=frutigeros
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="0;36"
+HOME_URL="https://github.com/frutigeros"
+DOCUMENTATION_URL="https://github.com/frutigeros/frutigeros-docs"
+SUPPORT_URL="https://github.com/frutigeros/frutigeros/issues"
+BUG_REPORT_URL="https://github.com/frutigeros/frutigeros/issues"
+LOGO=frutigeros-logo

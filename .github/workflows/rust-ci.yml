@@ -1,0 +1,107 @@
+name: Rust CI
+
+on:
+  push:
+    paths:
+      - "aeroshell/**"
+      - "aero-installer/**"
+      - "aero-apps/**"
+      - ".github/workflows/rust-ci.yml"
+  pull_request:
+    paths:
+      - "aeroshell/**"
+      - "aero-installer/**"
+      - "aero-apps/**"
+      - ".github/workflows/rust-ci.yml"
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  aeroshell:
+    name: AeroShell
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            aeroshell/target
+          key: ${{ runner.os }}-aeroshell-${{ hashFiles('aeroshell/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-aeroshell-
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libwayland-dev \
+            pkg-config
+      - name: Format check
+        working-directory: aeroshell
+        run: cargo fmt --check
+      - name: Clippy
+        working-directory: aeroshell
+        run: cargo clippy --all-targets -- -D warnings
+      - name: Test
+        working-directory: aeroshell
+        run: cargo test
+
+  aero-installer:
+    name: AeroInstaller
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            aero-installer/target
+          key: ${{ runner.os }}-aero-installer-${{ hashFiles('aero-installer/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-aero-installer-
+      - name: Format check
+        working-directory: aero-installer
+        run: cargo fmt --check
+      - name: Clippy
+        working-directory: aero-installer
+        run: cargo clippy --all-targets -- -D warnings
+      - name: Test
+        working-directory: aero-installer
+        run: cargo test
+      - name: Dry-run smoke test
+        working-directory: aero-installer
+        run: cargo run -- --dry-run
+
+  aero-apps:
+    name: Aero Apps
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            aero-apps/target
+          key: ${{ runner.os }}-aero-apps-${{ hashFiles('aero-apps/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-aero-apps-
+      - name: Format check
+        working-directory: aero-apps
+        run: cargo fmt --check
+      - name: Clippy
+        working-directory: aero-apps
+        run: cargo clippy --all-targets -- -D warnings
+      - name: Test
+        working-directory: aero-apps
+        run: cargo test

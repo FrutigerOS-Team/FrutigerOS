@@ -1,0 +1,19 @@
+[package]
+name = "aero-software"
+version = "0.1.0"
+edition = "2021"
+description = "AeroSoftware — graphical package manager for FrutigerOS"
+license = "MIT"
+
+[[bin]]
+name = "aero-software"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace  = true
+serde.workspace   = true
+toml.workspace    = true
+slog.workspace    = true
+slog-term.workspace  = true
+slog-async.workspace = true
+tokio.workspace   = true

@@ -1,0 +1,23 @@
+[workspace]
+members = [
+    "aero-files",
+    "aero-terminal",
+    "aero-settings",
+    "aero-monitor",
+    "aero-notes",
+    "aero-welcome",
+    "aero-software",
+    "aero-screenshot",
+    "aero-music",
+]
+resolver = "2"
+
+[workspace.dependencies]
+anyhow  = "1"
+serde   = { version = "1", features = ["derive"] }
+toml    = "0.8"
+slog    = "2"
+slog-term  = "2"
+slog-async = "2"
+tokio   = { version = "1", features = ["rt", "rt-multi-thread", "macros", "fs", "process", "time"] }
+chrono  = { version = "0.4", features = ["clock", "serde"] }

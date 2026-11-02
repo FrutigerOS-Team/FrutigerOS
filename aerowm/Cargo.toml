@@ -1,0 +1,53 @@
+[package]
+name = "aerowm"
+version = "0.1.0"
+edition = "2021"
+description = "AeroWM — the Wayland compositor for FrutigerOS"
+license = "MIT"
+repository = "https://github.com/frutigeros/aerowm"
+keywords = ["wayland", "compositor", "window-manager", "linux"]
+categories = ["gui"]
+rust-version = "1.75"
+
+[[bin]]
+name = "aerowm"
+path = "src/main.rs"
+
+[dependencies]
+# Wayland compositor framework
+smithay = { version = "0.3", features = [
+    "backend_egl",
+    "backend_winit",
+    "renderer_gl",
+    "wayland_frontend",
+] }
+
+# Configuration
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+
+# Logging — smithay 0.3 uses slog; we bridge to it
+slog = "2"
+slog-term = "2"
+slog-async = "2"
+
+# Error handling
+anyhow = "1"
+thiserror = "1"
+
+# Utilities
+bitflags = "2"
+once_cell = "1"
+
+[dev-dependencies]
+# (none yet)
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.dev]
+opt-level = 0
+debug = true

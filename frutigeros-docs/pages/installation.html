@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Installation — FrutigerOS Docs</title>
+  <meta name="description" content="Validate and build the FrutigerOS archiso profile, and run AeroInstaller safely.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt=""><span>FrutigerOS<small>DOCUMENTATION</small></span></a>
+    <div class="topbar-spacer"></div>
+    <div class="search"><input type="search" placeholder="Filter pages…  (press /)" aria-label="Filter navigation"></div>
+    <button class="icon-button" data-theme-toggle type="button" aria-label="Toggle theme">☀</button>
+    <button class="icon-button menu-button" data-menu-toggle type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-group"><h2>Start here</h2><ul>
+        <li><a href="../index.html">Overview</a></li>
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="installation.html" aria-current="page">Installation</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Desktop</h2><ul>
+        <li><a href="aerowm.html">AeroWM</a></li>
+        <li><a href="aeroshell.html">AeroShell</a></li>
+        <li><a href="applications.html">Applications</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Project</h2><ul>
+        <li><a href="architecture.html">Architecture</a></li>
+        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+        <li><a href="contributing.html">Contributing</a></li>
+      </ul></div>
+    </aside>
+
+    <main class="content">
+      <h1>Installation</h1>
+      <p class="lede">Two independent paths: build the live ISO, or run the installer backend against a prepared target.</p>
+
+      <div class="note danger">
+        <strong>No boot-tested ISO exists yet.</strong> The archiso profile passes static
+        validation (<code>./build.sh --check</code>), but it has not been built or booted in
+        QEMU in the current development environment. Treat every ISO produced from this tree
+        as experimental.
+      </div>
+
+      <h2>1. Validate the ISO profile</h2>
+      <p>The validation script needs no root and no <code>archiso</code> installation.</p>
+      <pre><code>cd frutigeros-iso
+./build.sh --check</code></pre>
+      <p>It checks required files, shell syntax, executable bits, and that boot entries use the <code>%ARCHISO_LABEL%</code> placeholder.</p>
+
+      <h2>2. Build the ISO</h2>
+      <p><code>mkarchiso</code> mounts filesystems and must run as root. Install <code>archiso</code> first.</p>
+      <pre><code>sudo pacman -S archiso
+cd frutigeros-iso
+sudo ./build.sh --out ./out --work /tmp/frutigeros-work</code></pre>
+      <p>The image is written to <code>out/frutigeros-&lt;date&gt;-x86_64.iso</code>.</p>
+
+      <h3>Desktop packages are the remaining blocker</h3>
+      <p>
+        The profile boots Arch Linux with FrutigerOS branding and configuration. To get a
+        graphical live session, build packages for <code>aerowm</code>, <code>aeroshell</code>,
+        <code>aero-installer</code> and the asset packages, serve them from a local repository,
+        then enable the <code>[frutigeros]</code> section in <code>frutigeros-iso/pacman.conf</code>
+        and the matching entries in <code>packages.x86_64</code>.
+      </p>
+
+      <h2>3. Test in QEMU</h2>
+      <p>Install <code>qemu-full</code> and boot with UEFI firmware. The ISO label is generated at build time; <code>archisolabel</code> is substituted by archiso.</p>
+      <pre><code>qemu-system-x86_64 \
+  -enable-kvm -m 4096 -smp 4 \
+  -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE.fd \
+  -drive if=pflash,format=raw,file=/tmp/OVMF_VARS.fd \
+  -cdrom frutigeros-iso/out/frutigeros-*-x86_64.iso \
+  -boot d</code></pre>
+      <p>At the boot menu choose <strong>FrutigerOS Live</strong>. The live session currently falls back to a shell on a bare TTY because AeroWM's winit backend requires an existing display server.</p>
+
+      <h2>4. Run AeroInstaller</h2>
+      <p>The installer CLI is a complete wizard state machine with a command planner. <strong>Dry-run is the default.</strong></p>
+      <pre><code>cd aero-installer
+
+# Safe: probes disks, prints the plan, executes nothing
+cargo run
+
+# Destructive: requires both flags
+sudo cargo run -- --apply --yes</code></pre>
+
+      <h3>What the plan contains</h3>
+      <ol>
+        <li><code>sgdisk --zap-all</code> and partition creation (EFI, boot, swap, root).</li>
+        <li><code>mkfs.fat</code> / <code>mkfs.ext4</code> / <code>mkfs.btrfs</code> / <code>mkswap</code>.</li>
+        <li>Mount root, boot and EFI, then enable swap.</li>
+        <li><code>pacstrap</code> and <code>genfstab</code>.</li>
+        <li>Locale, timezone, hostname, user and sudo configuration through <code>arch-chroot</code>.</li>
+        <li>GRUB installation and <code>grub-mkconfig</code> (UEFI or BIOS).</li>
+        <li><code>umount -R</code>.</li>
+      </ol>
+
+      <div class="note warn">
+        <strong>Safety contract.</strong> The planner refuses unconfirmed partition plans.
+        <code>--apply</code> is rejected unless <code>--yes</code> is also present. Only clean
+        installs are supported; <em>alongside</em> and <em>manual</em> modes return an error
+        instead of guessing a layout. Disk probing uses <code>lsblk</code> and is read-only.
+      </div>
+
+      <h2>Manual install (current workaround)</h2>
+      <p>Until the ISO ships desktop packages, install Arch normally and build the components from source:</p>
+      <pre><code># on the target Arch system
+sudo pacman -S rustup wayland libxkbcommon mesa
+git clone https://github.com/frutigeros/frutigeros.git
+cd frutigeros
+
+(cd aerowm && cargo build --release)
+(cd aeroshell && cargo build --release)
+
+sudo install -Dm755 aerowm/target/release/aerowm /usr/local/bin/aerowm
+sudo install -Dm755 aeroshell/target/release/aeroshell /usr/local/bin/aeroshell</code></pre>
+
+      <div class="page-nav">
+        <a href="getting-started.html"><span>Previous</span>← Getting started</a>
+        <a class="next" href="aerowm.html"><span>Next</span>AeroWM →</a>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">FrutigerOS documentation · MIT licensed · <a href="contributing.html">Contributing</a></footer>
+  <script src="../assets/docs.js"></script>
+</body>
+</html>

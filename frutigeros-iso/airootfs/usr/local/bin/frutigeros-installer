@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Launch AeroInstaller from the live medium.
+set -u
+
+if command -v aero-installer >/dev/null 2>&1; then
+  exec aero-installer "$@"
+fi
+
+cat <<'EOF'
+AeroInstaller is not installed on this medium yet.
+
+It is part of the FrutigerOS desktop package set. Until those packages are
+built and published to the [frutigeros] repository, the ISO ships the backend
+sources only. See frutigeros-iso/README.md for the packaging steps.
+EOF
+exit 1

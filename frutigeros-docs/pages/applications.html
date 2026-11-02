@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Applications — FrutigerOS Docs</title>
+  <meta name="description" content="The nine native FrutigerOS applications and their current backends.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt=""><span>FrutigerOS<small>DOCUMENTATION</small></span></a>
+    <div class="topbar-spacer"></div>
+    <div class="search"><input type="search" placeholder="Filter pages…  (press /)" aria-label="Filter navigation"></div>
+    <button class="icon-button" data-theme-toggle type="button" aria-label="Toggle theme">☀</button>
+    <button class="icon-button menu-button" data-menu-toggle type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-group"><h2>Start here</h2><ul>
+        <li><a href="../index.html">Overview</a></li>
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="installation.html">Installation</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Desktop</h2><ul>
+        <li><a href="aerowm.html">AeroWM</a></li>
+        <li><a href="aeroshell.html">AeroShell</a></li>
+        <li><a href="applications.html" aria-current="page">Applications</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Project</h2><ul>
+        <li><a href="architecture.html">Architecture</a></li>
+        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+        <li><a href="contributing.html">Contributing</a></li>
+      </ul></div>
+    </aside>
+
+    <main class="content">
+      <h1>Applications</h1>
+      <p class="lede">Nine first-party applications live in the <code>aero-apps</code> Cargo workspace. Their data layers and backends are implemented and tested; interactive UI work is ongoing.</p>
+
+      <div class="note warn">
+        <strong>Status.</strong> The crates compile and their 32 unit tests pass, but most
+        binaries still print a status summary instead of presenting a window. Treat this page
+        as an inventory of backend capabilities, not a promise of finished apps.
+      </div>
+
+      <h2>Inventory</h2>
+      <table>
+        <thead><tr><th>App</th><th>Crate</th><th>Implemented backend</th></tr></thead>
+        <tbody>
+          <tr><td><strong>AeroFiles</strong></td><td><code>aero-files</code></td><td>Directory listing, MIME detection, human-readable sizes, navigation</td></tr>
+          <tr><td><strong>AeroTerminal</strong></td><td><code>aero-terminal</code></td><td>PTY spawn/resize, VT100-style parser, terminal config</td></tr>
+          <tr><td><strong>AeroSettings</strong></td><td><code>aero-settings</code></td><td>12 settings pages with unique IDs, defaults and validation</td></tr>
+          <tr><td><strong>AeroSoftware</strong></td><td><code>aero-software</code></td><td>Package search/install/remove through <code>pacman</code> (dry-run aware)</td></tr>
+          <tr><td><strong>AeroMonitor</strong></td><td><code>aero-monitor</code></td><td><code>/proc/stat</code> CPU, <code>/proc/meminfo</code>, disk usage</td></tr>
+          <tr><td><strong>AeroWelcome</strong></td><td><code>aero-welcome</code></td><td>Six-step first-boot wizard, completion file tracking</td></tr>
+          <tr><td><strong>AeroScreenshot</strong></td><td><code>aero-screenshot</code></td><td>grim/wl-copy capture pipeline, output naming</td></tr>
+          <tr><td><strong>AeroMusic</strong></td><td><code>aero-music</code></td><td>Recursive library scan, metadata struct, playback commands</td></tr>
+          <tr><td><strong>AeroNotes</strong></td><td><code>aero-notes</code></td><td>Markdown note store with front matter, save/delete/list</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Build the workspace</h2>
+      <pre><code>cd aero-apps
+cargo build --workspace
+cargo test --workspace</code></pre>
+      <p>Each crate is a standalone binary. Run one directly, for example:</p>
+      <pre><code>cargo run -p aero-files
+cargo run -p aero-monitor
+cargo run -p aero-terminal</code></pre>
+
+      <h2>Design conventions</h2>
+      <ul>
+        <li><strong>No GUI toolkit dependency yet.</strong> Backends are plain Rust so they can be tested headlessly and reused by a future Aero Glass UI.</li>
+        <li><strong>Read-only by default.</strong> System-changing operations (package install, disk writes, screenshot capture) are explicit and logged.</li>
+        <li><strong>XDG paths.</strong> Config and state use <code>XDG_CONFIG_HOME</code> / <code>XDG_DATA_HOME</code> with sensible fallbacks.</li>
+        <li><strong>Testable seams.</strong> Parsing, planning and formatting are separated from process spawning and filesystem mutation.</li>
+      </ul>
+
+      <h2>AeroTerminal internals</h2>
+      <p>The terminal backend uses a pseudo-terminal pair: the child runs in the slave, the UI reads and writes the master. The VT parser handles printable characters, newlines, carriage returns and a minimum set of escape sequences. Resize propagates <code>TIOCSWINSZ</code> to the child.</p>
+      <pre><code>pub fn pty_resize(fd: RawFd, rows: u16, cols: u16) -&gt; io::Result&lt;()&gt;;</code></pre>
+
+      <h2>AeroMonitor internals</h2>
+      <p>CPU utilisation is computed from the delta between two <code>/proc/stat</code> samples; memory comes from <code>/proc/meminfo</code>; disk usage uses <code>df</code>. The sampler is stateless between calls, so the UI owns the previous sample.</p>
+
+      <h2>AeroScreenshot internals</h2>
+      <p>Capture shells out to <code>grim</code> (Wayland) and optionally <code>wl-copy</code> for the clipboard. The backend builds the argument vector without a shell, so output paths with spaces are safe. A UI and a region-selection overlay are still pending.</p>
+
+      <div class="page-nav">
+        <a href="aeroshell.html"><span>Previous</span>← AeroShell</a>
+        <a class="next" href="architecture.html"><span>Next</span>Architecture →</a>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">FrutigerOS documentation · MIT licensed · <a href="contributing.html">Contributing</a></footer>
+  <script src="../assets/docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# FrutigerOS live-environment preparation.
+#
+# Read-only with respect to the install target: it only seeds configuration
+# inside the live root filesystem, and never touches block devices.
+set -u
+
+quiet=0
+[ "${1:-}" = "--quiet" ] && quiet=1
+say() { [ "$quiet" -eq 1 ] || printf '[frutigeros-live-setup] %s\n' "$*"; }
+
+# Runtime directory for the graphical session.
+mkdir -p /run/user/0
+chmod 700 /run/user/0
+
+# Seed AeroWM config only when the user has not customised it yet.
+for home in /root /home/*; do
+  [ -d "$home" ] || continue
+  dest="$home/.config/aerowm/config.toml"
+  if [ ! -f "$dest" ] && [ -f /usr/share/aerowm/config.toml ]; then
+    install -Dm644 /usr/share/aerowm/config.toml "$dest"
+    say "Created $dest"
+  fi
+done
+
+# Standard user directories for the live user.
+for dir in Desktop Documents Downloads Pictures Music Videos; do
+  mkdir -p "/root/$dir"
+done
+
+say "Live environment ready."

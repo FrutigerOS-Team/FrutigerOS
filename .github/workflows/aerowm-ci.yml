@@ -1,0 +1,81 @@
+name: AeroWM CI
+
+on:
+  push:
+    paths:
+      - "aerowm/**"
+      - ".github/workflows/aerowm-ci.yml"
+  pull_request:
+    paths:
+      - "aerowm/**"
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  check:
+    name: Check & Test
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            aerowm/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('aerowm/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libwayland-dev \
+            libxkbcommon-dev \
+            libudev-dev \
+            libinput-dev \
+            libgbm-dev \
+            libdrm-dev \
+            libseat-dev \
+            libegl-dev \
+            libgles2-mesa-dev \
+            pkg-config
+
+      - name: Format check
+        working-directory: aerowm
+        run: cargo fmt --check
+
+      - name: Clippy
+        working-directory: aerowm
+        run: cargo clippy -- -D warnings
+
+      - name: Build
+        working-directory: aerowm
+        run: cargo build
+
+      - name: Test
+        working-directory: aerowm
+        run: cargo test
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked
+      - name: Audit dependencies
+        working-directory: aerowm
+        run: cargo audit

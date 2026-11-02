@@ -1,0 +1,23 @@
+# AeroWM default config for the FrutigerOS live environment.
+# Copied to /root/.config/aerowm/config.toml on first boot.
+
+[general]
+backend = "udev"
+xwayland = true
+
+[appearance]
+corner_radius   = 12
+blur_strength   = 20
+glass_opacity   = 0.82
+border_active   = "#00AEEFcc"
+border_inactive = "#7DDCFF44"
+animation_speed = 1.0
+shadow_blur     = 24
+shadow_opacity  = 0.40
+
+[workspaces]
+count          = 4
+default_layout = "floating"
+
+[keybindings]
+modifier = "super"

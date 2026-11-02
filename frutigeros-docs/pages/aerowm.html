@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AeroWM — FrutigerOS Docs</title>
+  <meta name="description" content="AeroWM architecture, keybindings, configuration and panel integration.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt=""><span>FrutigerOS<small>DOCUMENTATION</small></span></a>
+    <div class="topbar-spacer"></div>
+    <div class="search"><input type="search" placeholder="Filter pages…  (press /)" aria-label="Filter navigation"></div>
+    <button class="icon-button" data-theme-toggle type="button" aria-label="Toggle theme">☀</button>
+    <button class="icon-button menu-button" data-menu-toggle type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-group"><h2>Start here</h2><ul>
+        <li><a href="../index.html">Overview</a></li>
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="installation.html">Installation</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Desktop</h2><ul>
+        <li><a href="aerowm.html" aria-current="page">AeroWM</a></li>
+        <li><a href="aeroshell.html">AeroShell</a></li>
+        <li><a href="applications.html">Applications</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Project</h2><ul>
+        <li><a href="architecture.html">Architecture</a></li>
+        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+        <li><a href="contributing.html">Contributing</a></li>
+      </ul></div>
+    </aside>
+
+    <main class="content">
+      <h1>AeroWM</h1>
+      <p class="lede">A Smithay-based Wayland compositor written in Rust. It owns the display socket, maps xdg-shell toplevels, manages floating workspaces and hosts the AeroShell panel.</p>
+
+      <div class="note">
+        <strong>Backend status.</strong> AeroWM runs on the Smithay <em>winit</em> backend
+        (a window inside X11/Wayland). The udev/DRM backend for bare-metal startup is not
+        implemented. Shader sources for glass and shadows exist but are not wired into the
+        render path yet.
+      </div>
+
+      <h2>Module map</h2>
+      <table>
+        <thead><tr><th>File</th><th>Responsibility</th></tr></thead>
+        <tbody>
+          <tr><td><code>main.rs</code></td><td>Logging, config load, compositor startup</td></tr>
+          <tr><td><code>compositor.rs</code></td><td>Wayland globals, xdg-shell, rendering, input, panel promotion</td></tr>
+          <tr><td><code>workspace.rs</code></td><td>Workspace manager, per-workspace window stack, focus cycling</td></tr>
+          <tr><td><code>input.rs</code></td><td>Key → action mapping, modifier state, dispatch</td></tr>
+          <tr><td><code>config.rs</code></td><td>TOML config with defaults and round-trip tests</td></tr>
+          <tr><td><code>render.rs</code></td><td>Color parsing, glass parameters, shadow parameters, spring easing</td></tr>
+          <tr><td><code>effects/</code></td><td>Animation state machine, glass/shadow effect descriptors</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Surface lifecycle</h2>
+      <ol>
+        <li>An <code>xdg_toplevel</code> is created by a client.</li>
+        <li><code>sync_windows()</code> reads <code>app_id</code> and title from surface data.</li>
+        <li>Ordinary windows are inserted into the active workspace with a cascade position.</li>
+        <li>A surface with <code>app_id = "frutigeros-aeropanel"</code> is promoted to panel:
+            it is removed from workspace management, pinned full-width at the bottom, and
+            reconfigured to <code>screen_width × panel_height</code>.</li>
+        <li>Dead surfaces and surfaces with a removed buffer are dropped on the next sync.</li>
+      </ol>
+
+      <h3>Panel detection</h3>
+      <p>The panel is detected during the periodic <code>sync_windows()</code> pass, not in the commit hook. The first client frame may briefly use the initial configure size before the panel-specific configure arrives.</p>
+      <pre><code>const PANEL_APP_ID: &amp;str = "frutigeros-aeropanel";
+
+let is_panel = app_id.as_deref() == Some(PANEL_APP_ID);
+if is_panel &amp;&amp; !win.is_panel {
+    self.configure_panel(key);
+}</code></pre>
+
+      <h2>Rendering</h2>
+      <p>The compositor clears to deep ocean (<code>#063B5C</code>), imports pending SHM buffers into GLES2 textures, draws the active workspace in stack order, then draws panels last so they sit above windows. Frame callbacks are sent after presentation so clients can throttle.</p>
+
+      <h2>Keybindings</h2>
+      <table>
+        <thead><tr><th>Shortcut</th><th>Action</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>Super</kbd> + <kbd>Return</kbd></td><td>Launch <code>aero-terminal</code></td><td>Implemented</td></tr>
+          <tr><td><kbd>Super</kbd> + <kbd>1</kbd>…<kbd>9</kbd></td><td>Switch workspace</td><td>Implemented</td></tr>
+          <tr><td><kbd>Alt</kbd> + <kbd>Tab</kbd></td><td>Focus next window</td><td>Implemented</td></tr>
+          <tr><td><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>Tab</kbd></td><td>Focus previous window</td><td>Implemented</td></tr>
+          <tr><td><kbd>Super</kbd> + <kbd>W</kbd></td><td>Close focused window</td><td>Implemented</td></tr>
+          <tr><td><kbd>Super</kbd> + <kbd>F</kbd></td><td>Toggle fullscreen</td><td>Implemented</td></tr>
+          <tr><td><kbd>Super</kbd> + <kbd>Space</kbd></td><td>Open launcher</td><td>Mapped; popup surface pending</td></tr>
+          <tr><td><kbd>Super</kbd> + <kbd>V</kbd></td><td>Toggle floating</td><td>Mapped; layout toggle pending</td></tr>
+          <tr><td><kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>Q</kbd></td><td>Quit compositor</td><td>Implemented</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Pointer and focus</h2>
+      <p>
+        Absolute pointer motion is forwarded to the focused surface. Hit-testing walks the
+        active workspace stack from top to bottom and then checks panels, which sit above
+        normal windows. Clicking a window focuses and raises it; button events are forwarded
+        to the surface under the cursor.
+      </p>
+
+      <h2>Configuration</h2>
+      <p>AeroWM reads <code>~/.config/aerowm/config.toml</code> (or <code>$XDG_CONFIG_HOME/aerowm/config.toml</code>) and falls back to defaults on any error.</p>
+      <pre><code>[general]
+backend = "winit"
+xwayland = false
+
+[appearance]
+corner_radius   = 12
+blur_strength   = 20
+glass_opacity   = 0.82
+border_active   = "#00AEEFcc"
+border_inactive = "#7DDCFF44"
+animation_speed = 1.0
+shadow_blur     = 24
+shadow_opacity  = 0.40
+panel_height    = 48
+
+[workspaces]
+count          = 4
+default_layout = "floating"
+
+[keybindings]
+modifier = "super"</code></pre>
+
+      <div class="note warn">
+        <strong>Not yet implemented:</strong> interactive move/resize, shader-based blur and
+        rounded corners, animation applied to real surfaces, tiling layouts, XWayland, and
+        the udev/DRM backend. The config keys for these are accepted but currently unused.
+      </div>
+
+      <div class="page-nav">
+        <a href="installation.html"><span>Previous</span>← Installation</a>
+        <a class="next" href="aeroshell.html"><span>Next</span>AeroShell →</a>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">FrutigerOS documentation · MIT licensed · <a href="contributing.html">Contributing</a></footer>
+  <script src="../assets/docs.js"></script>
+</body>
+</html>

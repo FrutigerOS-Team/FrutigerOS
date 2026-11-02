@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contributing — FrutigerOS Docs</title>
+  <meta name="description" content="How to contribute to FrutigerOS.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt=""><span>FrutigerOS<small>DOCUMENTATION</small></span></a>
+    <div class="topbar-spacer"></div>
+    <div class="search"><input type="search" placeholder="Filter pages…  (press /)" aria-label="Filter navigation"></div>
+    <button class="icon-button" data-theme-toggle type="button" aria-label="Toggle theme">☀</button>
+    <button class="icon-button menu-button" data-menu-toggle type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-group"><h2>Start here</h2><ul>
+        <li><a href="../index.html">Overview</a></li>
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="installation.html">Installation</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Desktop</h2><ul>
+        <li><a href="aerowm.html">AeroWM</a></li>
+        <li><a href="aeroshell.html">AeroShell</a></li>
+        <li><a href="applications.html">Applications</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Project</h2><ul>
+        <li><a href="architecture.html">Architecture</a></li>
+        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+        <li><a href="contributing.html" aria-current="page">Contributing</a></li>
+      </ul></div>
+    </aside>
+
+    <main class="content">
+      <h1>Contributing</h1>
+      <p class="lede">FrutigerOS welcomes code, design, documentation and testing contributions. The bar is simple: be truthful about what works.</p>
+
+      <h2>Ground rules</h2>
+      <ul>
+        <li>Follow the <a href="../../CODE_OF_CONDUCT.md">Code of Conduct</a>.</li>
+        <li>Keep changes focused. One coherent change per pull request.</li>
+        <li>Do not replace working code with placeholders, and do not mark a roadmap item complete without a reproducible check.</li>
+        <li>Never run destructive disk operations in tests, CI or examples.</li>
+        <li>Match the surrounding style; run <code>cargo fmt</code> before submitting.</li>
+      </ul>
+
+      <h2>Before you open a pull request</h2>
+      <pre><code># in every crate you touched
+cargo fmt --check
+cargo test
+
+# applications workspace
+cd aero-apps
+cargo fmt --all --check
+cargo test --workspace
+
+# ISO profile
+cd frutigeros-iso
+./build.sh --check</code></pre>
+
+      <p>If a check cannot run in your environment (for example <code>mkarchiso</code> is unavailable), say so in the pull request and describe what you verified instead.</p>
+
+      <h2>What to work on</h2>
+      <p>The roadmap is ordered by dependency, not by glamour. High-value areas:</p>
+      <table>
+        <thead><tr><th>Area</th><th>Concrete task</th></tr></thead>
+        <tbody>
+          <tr><td>AeroWM</td><td>Interactive move/resize; udev/DRM backend; wire the glass shader into the render path</td></tr>
+          <tr><td>AeroShell</td><td>AeroWM ↔ shell IPC; AeroStart popup surface; notification toasts and D-Bus</td></tr>
+          <tr><td>Installer</td><td>Graphical UI; UEFI detection edge cases; integration tests in a VM</td></tr>
+          <tr><td>Apps</td><td>Interactive UIs on top of the existing backends</td></tr>
+          <tr><td>ISO</td><td>PKGBUILDs, custom repository, QEMU boot validation</td></tr>
+          <tr><td>Docs</td><td>Keep this site accurate as features land</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Commit style</h2>
+      <p>Use the imperative mood and a scoped prefix when useful:</p>
+      <pre><code>aerowm: forward pointer button events to surfaces
+aeroshell: render panel clock with bitmap font
+installer: add gated sgdisk/mkfs command planner
+docs: add troubleshooting guide</code></pre>
+
+      <h2>Documentation changes</h2>
+      <p>This site is plain HTML, CSS and JavaScript with no build step. Edit the page directly and verify it in a browser. Every page shares the same sidebar and top bar; keep links relative so the site works from <code>file://</code> as well as a static server.</p>
+      <pre><code>cd frutigeros-docs
+python3 -m http.server 8080
+# open http://localhost:8080/</code></pre>
+
+      <h2>Reporting bugs</h2>
+      <p>Include the component, exact command, expected vs actual behaviour, and the relevant log lines. For compositor bugs, include the <code>WAYLAND_DISPLAY</code> value and whether you ran nested or on hardware. For installer bugs, state whether you used dry-run or <code>--apply --yes</code> — never include a bug report that asks someone else to reproduce a destructive run.</p>
+
+      <div class="note">
+        <strong>Security.</strong> Report vulnerabilities privately as described in
+        <a href="../../SECURITY.md">SECURITY.md</a> rather than in a public issue.
+      </div>
+
+      <div class="page-nav">
+        <a href="troubleshooting.html"><span>Previous</span>← Troubleshooting</a>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">FrutigerOS documentation · MIT licensed · <a href="../../CONTRIBUTING.md">CONTRIBUTING.md</a></footer>
+  <script src="../assets/docs.js"></script>
+</body>
+</html>

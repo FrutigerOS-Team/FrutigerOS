@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AeroShell — FrutigerOS Docs</title>
+  <meta name="description" content="AeroShell panel client, tiny-skia renderer, launcher and notifications.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt=""><span>FrutigerOS<small>DOCUMENTATION</small></span></a>
+    <div class="topbar-spacer"></div>
+    <div class="search"><input type="search" placeholder="Filter pages…  (press /)" aria-label="Filter navigation"></div>
+    <button class="icon-button" data-theme-toggle type="button" aria-label="Toggle theme">☀</button>
+    <button class="icon-button menu-button" data-menu-toggle type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-group"><h2>Start here</h2><ul>
+        <li><a href="../index.html">Overview</a></li>
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="installation.html">Installation</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Desktop</h2><ul>
+        <li><a href="aerowm.html">AeroWM</a></li>
+        <li><a href="aeroshell.html" aria-current="page">AeroShell</a></li>
+        <li><a href="applications.html">Applications</a></li>
+      </ul></div>
+      <div class="nav-group"><h2>Project</h2><ul>
+        <li><a href="architecture.html">Architecture</a></li>
+        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+        <li><a href="contributing.html">Contributing</a></li>
+      </ul></div>
+    </aside>
+
+    <main class="content">
+      <h1>AeroShell</h1>
+      <p class="lede">The desktop shell: a real Wayland panel rendered in software, an XDG launcher, and a notification pipeline.</p>
+
+      <h2>The panel is a real surface</h2>
+      <p>
+        AeroShell connects to AeroWM as an ordinary Wayland client. It binds
+        <code>wl_compositor</code>, <code>wl_shm</code> and <code>xdg_wm_base</code>, creates
+        an xdg toplevel, and commits an <code>ARGB8888</code> shared-memory buffer. AeroWM
+        identifies the panel by <code>app_id</code>.
+      </p>
+      <pre><code>pub const APP_ID: &amp;str = "frutigeros-aeropanel";
+
+// AeroWM pins this app_id to the bottom edge, full width,
+// above normal windows and outside workspace management.</code></pre>
+
+      <div class="note">
+        <strong>Why not wlr-layer-shell?</strong> Smithay 0.3 does not provide a server-side
+        layer-shell module. Rather than adding an unmaintained protocol implementation, the
+        panel is a toplevel with a reserved app_id, special-cased by the compositor.
+      </div>
+
+      <h2>Rendering pipeline</h2>
+      <ol>
+        <li>Compute a layout for the configured width and height.</li>
+        <li>Draw into a <code>tiny-skia</code> pixmap: deep-ocean gradient, gloss and border, start orb, workspace dots, tagline, clock/date, tray glyphs, quick-settings pill.</li>
+        <li>Convert RGBA pixmap pixels to premultiplied <code>ARGB8888</code>.</li>
+        <li>Copy into a <code>tempfile</code>-backed <code>wl_shm</code> pool.</li>
+        <li>Attach, damage, commit; wait for buffer release before reuse.</li>
+      </ol>
+      <p>The clock requests a redraw on the next minute boundary using a <code>libc::poll</code> timeout, so the event loop stays idle between ticks.</p>
+
+      <h3>Dependency-free text</h3>
+      <p>
+        Text is drawn with a built-in 5×7 bitmap font (<code>glyphs.rs</code>) rather than
+        fontconfig/FreeType. This keeps the live ISO deterministic and avoids a runtime font
+        dependency. It covers digits, A–Z, <code>:</code>, <code>.</code>, <code>-</code>,
+        <code>/</code> and space.
+      </p>
+
+      <h2>Layout model</h2>
+      <p>Items are placed left-to-right, with the right-hand group measured from the right edge:</p>
+      <pre><code>[Start] [WS1 WS2 WS3 WS4] [── tasks ──] [Clock] [Tray] [Quick settings]</code></pre>
+      <p>The layout engine is pure and unit-tested: the items always cover the configured width, four workspaces are present by default, and start/clock items exist.</p>
+
+      <h2>AeroStart launcher</h2>
+      <p><code>launcher.rs</code> discovers <code>.desktop</code> files from XDG data directories, parses name/exec/icon fields, strips field codes (<code>%f</code>, <code>%U</code>, …), and provides case-insensitive search. Launching spawns the cleaned command.</p>
+      <pre><code>let apps = launcher::discover_apps();
+let hits = launcher::search(&amp;apps, "term");
+launcher::launch(&amp;hits[0])?;</code></pre>
+      <p>The popup <em>surface</em> is not implemented yet; the data layer is complete and tested.</p>
+
+      <h2>Notifications</h2>
+      <p><code>notifications.rs</code> models a notification queue with summary, body, urgency, expiry and a visible-count cap. The async daemon task is wired into <code>main.rs</code>, but D-Bus delivery and toast surfaces are pending.</p>
+
+      <h2>Configuration</h2>
+      <p>Read from <code>~/.config/aeroshell/config.toml</code>:</p>
+      <pre><code>[panel]
+height = 48
+position = "bottom"
+show_workspaces = true
+show_clock = true
+show_tray = true
+launcher_key = "Super+Space"
+
+[launcher]
+recent_count = 6
+favorites_count = 8
+
+[notifications]
+duration_ms = 5000
+corner = "top-right"
+max_visible = 5</code></pre>
+
+      <div class="note warn">
+        <strong>Known limitation.</strong> The panel currently hard-codes
+        <code>active_workspace = 0</code>: there is no AeroWM → shell IPC yet. Workspace changes
+        in the compositor are not reflected in the panel, and the clock is the only live
+        element.
+      </div>
+
+      <div class="page-nav">
+        <a href="aerowm.html"><span>Previous</span>← AeroWM</a>
+        <a class="next" href="applications.html"><span>Next</span>Applications →</a>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">FrutigerOS documentation · MIT licensed · <a href="contributing.html">Contributing</a></footer>
+  <script src="../assets/docs.js"></script>
+</body>
+</html>
